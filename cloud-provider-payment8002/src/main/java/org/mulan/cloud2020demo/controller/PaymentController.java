@@ -4,14 +4,10 @@ import org.mulan.cloud2020demo.entities.CommonResult;
 import org.mulan.cloud2020demo.entities.Payment;
 import org.mulan.cloud2020demo.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author 韩志雄
@@ -23,9 +19,6 @@ public class PaymentController {
 
 	@Resource
 	private PaymentService paymentService;
-
-	@Resource
-	private DiscoveryClient discoveryClient;
 
 	@Value("${server.port}")
 	private String serverPort;
@@ -56,18 +49,5 @@ public class PaymentController {
 		commonResult = new CommonResult(200, "查询失败！port="+serverPort,null);
 		log.info("查询id为"+id+"的一条记录失败！");
 		return commonResult;
-	}
-
-	@GetMapping("/payment/discovery")
-	public Object discovery(){
-		List<String> services = discoveryClient.getServices();
-		for (String element : services) {
-			log.info("********element:"+element);
-		}
-		List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
-		for (ServiceInstance instance : instances) {
-			log.info(instance.getServiceId()+"\t"+instance.getHost()+"\t"+instance.getPort()+"\t"+instance.getUri());
-		}
-		return this.discoveryClient;
 	}
 }
